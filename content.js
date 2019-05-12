@@ -6,18 +6,27 @@ chrome.runtime.onMessage.addListener(
     });
 
 function scrapeUrl(url){
-    //var phoneArr = ['/\+\d\d?-?.?\d{3}-\d{3}-\d{4}/g','/\+\d/g']
-    $.ajax({
+        $.ajax({
         url: url,
         contentType: "json",
         crossDomain: true,
         success: function (response) {
-            var phone = response.match(/\+?\d?\d? ?-?\d{3}-?\d{2} ?\d-?\d{4}/g);
-            //matches   +1 7878787878, +91 7878787878 ,7878787878,+91 95381 10008,+1 78787 87878
+            var phoneArr = [
+                "\\+\\d\\d?-? ?\\d{3}-\\d{3}-\\d{4}",//
+                "\\+\\d\\d?-? ?\\d{10}",
+                "\\+\\d\\d?-? ?\\d{5} \\d{5}",
+                "\\d{3}-\\d{3}-\\d{4}",
+                "\\d{10}",
+                "\\d{5} \\d{5}"
+            ];
+            var re = new RegExp(phoneArr.join("|"),"g");
+            var phone = response.match(re);
+            
             var email = response.match(/\w{1,}@\w{1,}.\w{1,3}/g);
             //matches    a@b.c, a1@b.c , a231a@b.c
             console.log("email from  page", email);
-            console.log("contact information from  page", phone); // also it might bring many different data ids eg facebook
+            console.log("contact information from  page", phone);
+            // also it might bring many different data ids eg facebook
             //so filter it out as user's need
 
             //code to filter
